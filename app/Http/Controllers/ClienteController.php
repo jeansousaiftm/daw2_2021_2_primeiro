@@ -14,10 +14,13 @@ class ClienteController extends Controller
      */
     public function index()
     {
-		return response()->json([
-			"acao" => "sucesso"
+		$clientes = Cliente::All();
+		$cliente = new Cliente();
+		
+		return view("cliente.index", [
+			"clientes" => $clientes,
+			"cliente" => $cliente
 		]);
-		//return view("cliente.index");
     }
 
     /**
@@ -38,7 +41,21 @@ class ClienteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+		if ($request->get("id") == "") {
+			$cliente = new Cliente();
+		} else {
+			$cliente = Cliente::Find($request->get("id"));
+		}
+		
+		$cliente->nome = $request->get("nome");
+		$cliente->cpf = $request->get("cpf");
+		$cliente->email = $request->get("email");
+		$cliente->telefone = $request->get("telefone");
+		$cliente->data_nascimento = $request->get("data_nascimento");
+		
+		$cliente->save();
+		
+		return redirect("/cliente");
     }
 
     /**
@@ -65,7 +82,13 @@ class ClienteController extends Controller
      */
     public function edit($id)
     {
-        //
+        $clientes = Cliente::All();
+		$cliente = Cliente::Find($id);
+		
+		return view("cliente.index", [
+			"clientes" => $clientes,
+			"cliente" => $cliente
+		]);
     }
 
     /**
@@ -88,6 +111,7 @@ class ClienteController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Cliente::Destroy($id);	
+		return redirect("/cliente");
     }
 }
